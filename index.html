@@ -95,7 +95,7 @@
           srcVideo.muted = true;
           srcVideo.controls = true;
           srcVideo.onloadedmetadata = async () => {
-            await videoRef.value.play();
+            await srcVideo.play();
           };
         })
         .catch(function (err) {
