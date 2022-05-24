@@ -7,9 +7,9 @@
     <title>拍照</title>
     <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
     <script>
-    // 初始化
-    var vConsole = new VConsole();
-    console.log('Hello world');
+      // 初始化
+      var vConsole = new VConsole();
+      console.log("Hello world");
     </script>
     <style>
       .loading {
@@ -53,7 +53,9 @@
       class="src-video"
       width="300px"
       height="300px"
-      autoplay="autoplay"
+      autoplay
+      muted
+      controls
     ></video>
     <canvas id="canvas" width="300px" height="300px"></canvas>
     <img src="" alt="" class="photo" />
@@ -82,13 +84,16 @@
       ); // 是否手机端
       // const isWx = /micromessenger/i.test(navigator.userAgent) // 是否微信
       const isComWx = /wxwork/i.test(navigator.userAgent); // 是否企业微信
-      console.log(isComWx)
-      console.log(isMobile)
+      console.log(isComWx);
+      console.log(isMobile);
       mediaPromise
         .then(function (stream) {
           /* 使用这个stream stream */
           mediaStream = stream;
           srcVideo.srcObject = stream;
+          video.autoplay = true;
+          video.muted = true;
+          video.controls = true;
           srcVideo.onloadedmetadata = async () => {
             await videoRef.value.play();
           };
