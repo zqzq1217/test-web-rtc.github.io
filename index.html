@@ -49,12 +49,7 @@
     <span class="loading">正在加载中<dot>...</dot> </span>
     <button onclick="openMedia()">开启摄像头</button>
     <button onclick="takePhoto()">拍照</button><br /><br />
-    <video
-      class="src-video"
-      width="300px"
-      height="300px"
-      autoplay
-    ></video>
+    <video class="src-video" width="300px" height="300px" autoplay playsinline></video>
     <canvas id="canvas" width="300px" height="300px"></canvas>
     <img src="" alt="" class="photo" />
   </body>
@@ -63,16 +58,11 @@
     let mediaStream;
     let photo = document.querySelector("img.photo");
     // 开启摄像头
-    let openMedia = function () {
+    let openMedia = async function () {
       photo.src = "";
-      srcVideo.style.display = "block";
       let constraints = {
         audio: false, //音频轨道
-        video: {
-          width: { ideal: 1920 },
-          height: { ideal: 1280 },
-          facingMode: "user",
-        }, //视频轨道
+        video: true, //视频轨道
       };
       const mediaPromise =
         window.navigator.mediaDevices.getUserMedia(constraints);
@@ -84,15 +74,14 @@
       const isComWx = /wxwork/i.test(navigator.userAgent); // 是否企业微信
       console.log(isComWx);
       console.log(isMobile);
-      mediaPromise
+      await mediaPromise
         .then(function (stream) {
           /* 使用这个stream stream */
           mediaStream = stream;
           srcVideo.srcObject = stream;
-          srcVideo.autoplay = true;
-          srcVideo.muted = true;
+          console.log(srcVideo)
           srcVideo.onloadedmetadata = async () => {
-            await srcVideo.play();
+              await srcVideo.play();
           };
         })
         .catch(function (err) {
