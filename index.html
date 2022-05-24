@@ -91,9 +91,9 @@
           /* 使用这个stream stream */
           mediaStream = stream;
           srcVideo.srcObject = stream;
-          video.autoplay = true;
-          video.muted = true;
-          video.controls = true;
+          srcVideo.autoplay = true;
+          srcVideo.muted = true;
+          srcVideo.controls = true;
           srcVideo.onloadedmetadata = async () => {
             await videoRef.value.play();
           };
