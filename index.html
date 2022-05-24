@@ -48,6 +48,7 @@
   <body>
     <span class="loading">正在加载中<dot>...</dot> </span>
     <button onclick="reversal()">反转</button>
+    <button onclick="closeMedia()">关闭摄像头</button>
     <button onclick="openMedia()">开启摄像头</button>
     <button onclick="takePhoto()">拍照</button><br /><br />
     <video class="src-video" width="300px" height="300px" autoplay playsinline></video>
@@ -71,19 +72,15 @@
       const mediaPromise =
         window.navigator.mediaDevices.getUserMedia(constraints);
       console.log(navigator.mediaDevices);
-      const isMobile = window.navigator.userAgent.match(
-        /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
-      ); // 是否手机端
-      // const isWx = /micromessenger/i.test(navigator.userAgent) // 是否微信
+      const isWx = /micromessenger/i.test(navigator.userAgent) // 是否微信
       const isComWx = /wxwork/i.test(navigator.userAgent); // 是否企业微信
       console.log(isComWx);
-      console.log(isMobile);
+      console.log(isWx);
       await mediaPromise
         .then(function (stream) {
           /* 使用这个stream stream */
           mediaStream = stream;
           srcVideo.srcObject = stream;
-          console.log(srcVideo)
           srcVideo.onloadedmetadata = async () => {
               await srcVideo.play();
           };
@@ -100,44 +97,23 @@
       //获取 `canvas`元素，根据`srcVideo`中的数据进行图片绘制 `ctx.drawImage()`；
       let ctx = canvas.getContext("2d");
       ctx.drawImage(srcVideo, 0, 0, 300, 300);
-      //将 `canvas`绘制的图片信息，展示在 `img`标签中；
-      // photo.src=canvas.toDataURL();
-      console.log(photo.src);
-      // 方式1
-      // base64转blob
-      const blob = base64ToBlob(base64Data);
-      // blob转file
-      const file1 = blobToFile(blob, "文件名");
-
-      // 方式2
-      // base64转file
-      const file2 = base64ToFile(base64Data, "文件名");
-      closeMedia();
     };
 
     // 关闭摄像头
     let closeMedia = function () {
-      mediaStream.getTracks().forEach((track) => {
-        track.stop();
-      });
+        return new Promise(reslove => {
+            mediaStream.getTracks().forEach(async(track) => {
+              await track.stop();
+            });
+            reslove()
+        })
     };
 
     let reversal = function () {
-        front = ! front
-        console.log(front)
-        openMedia()
-    }
-    function base64ToFile(base64Data, fileName) {
-      let arr = base64Data.split(","),
-        fileType = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]),
-        l = bstr.length,
-        u8Arr = new Uint8Array(l);
-
-      while (l--) {
-        u8Arr[l] = bstr.charCodeAt(l);
-      }
-      return new File([u8Arr], fileName, { type: fileType });
+        closeMedia().then(() => {
+            front = ! front
+            openMedia()
+        })
     }
   </script>
 </html>
