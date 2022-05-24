@@ -1,12 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>拍照</title>
+    <style>
+        .loading{
+            display: flex;/*让dot和文字在同一行*/
+        }
+        dot{
+        	/*让点垂直居中*/
+            height: 1em;
+            line-height: 1;
+            /*让点垂直排列*/
+            display: flex;
+            flex-direction: column;
+            /*溢出部分的点隐藏*/
+            overflow: hidden;
+        }
+        dot::before{
+        	/*三行三种点，需要搭配white-space:pre使用才能识别\A字符*/
+            content: '...\A..\A.';
+            white-space: pre-wrap;
+            animation: dot 3s infinite step-end;/*step-end确保一次动画结束后直接跳到下一帧而没有过渡*/
+        }
+        @keyframes dot{
+            0% {transform: translateY(-3em);}
+            50% {transform: translateY(-1em);}
+            100% {transform: translateY(0em);}
+        }
+    </style>
 </head>
+
 <body>
-    111
+    <span class="loading">正在加载中<dot>...</dot> </span>
+    <button onclick="openMedia()" >开启摄像头</button>
+    <button onclick="takePhoto()" >拍照</button><br/><br/>
+    <video style="display: none;" class="src-video" width="300px" height="300px" autoplay="autoplay"></video>
+    <canvas id="canvas" width="300px" height="300px"></canvas>
+    <img src="" alt="" class="photo">
 </body>
+<script>
+    let srcVideo = document.querySelector('video.src-video');
+    let mediaStream;
+    let photo=document.querySelector('img.photo');
+    // 开启摄像头
+    let openMedia = function () {
+        photo.src='';
+        srcVideo.style.display='block';
+        let constraints = {
+            audio: false, //音频轨道
+            video: {width:300,height:300}  //视频轨道
+        }
+        let mediaPromise = navigator.mediaDevices.getUserMedia(constraints);
+        mediaPromise.then(function (stream) {
+            /* 使用这个stream stream */
+            mediaStream=stream;
+            srcVideo.srcObject = stream;
+            srcVideo.play();
+        }).catch(function (err) {
+            /* 处理error */
+            alert(err);
+        });
+    };
+
+    // 拍照
+    let takePhoto=function(){
+        let canvas = document.querySelector('#canvas');
+        //获取 `canvas`元素，根据`srcVideo`中的数据进行图片绘制 `ctx.drawImage()`；
+        let ctx = canvas.getContext('2d');
+        ctx.drawImage(srcVideo, 0, 0, 300, 300);
+        //将 `canvas`绘制的图片信息，展示在 `img`标签中；
+        // photo.src=canvas.toDataURL();
+		console.log(photo.src); 
+    // 方式1
+    // base64转blob
+    const blob = base64ToBlob(base64Data);
+    // blob转file
+    const file1 = blobToFile(blob, '文件名');
+
+    // 方式2
+    // base64转file
+    const file2 = base64ToFile(base64Data, '文件名');
+        closeMedia();
+    };
+
+    // 关闭摄像头
+    let closeMedia=function(){
+        mediaStream.getTracks().forEach(track => {
+            track.stop();
+        });
+        srcVideo.style.display='none';
+    };
+	
+	function base64ToFile(base64Data, fileName) {
+    let arr = base64Data.split(','),
+      fileType = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      l = bstr.length,
+      u8Arr = new Uint8Array(l);
+
+    while (l--) {
+      u8Arr[l] = bstr.charCodeAt(l);
+    }
+    return new File([u8Arr], fileName, {type: fileType});
+  }
+	
+
+</script>
 </html>
