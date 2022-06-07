@@ -120,9 +120,9 @@
       const canvas = document.createElement('canvas')
       //获取 `canvas`元素，根据`srcVideo`中的数据进行图片绘制 `ctx.drawImage()`；
       canvas.width = width
-      canvas.height = height
+      canvas.height = width
       let ctx = canvas.getContext("2d");
-      ctx.drawImage(srcVideo, 0, 0, width, height);
+      ctx.drawImage(srcVideo, 0, 0, width, width);
       srcVideo.style.display = 'none'
       photo.src = canvas.toDataURL()
       imgbox.style.display = 'block'
