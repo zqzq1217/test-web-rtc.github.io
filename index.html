@@ -12,6 +12,10 @@
       console.log("Hello world");
     </script>
     <style>
+      *{
+        margin: 0;
+        padding: 0;
+      }
       .loading {
         display: flex; /*让dot和文字在同一行*/
       }
@@ -30,6 +34,15 @@
         content: "...\A..\A.";
         white-space: pre-wrap;
         animation: dot 3s infinite step-end; /*step-end确保一次动画结束后直接跳到下一帧而没有过渡*/
+      }
+      .src-video{
+        width: 100vw;
+        height: 80vh;
+        object-fit: cover;
+      }
+      .photo {
+        transform: scaleX(-1);
+        object-fit: scale-down;
       }
       @keyframes dot {
         0% {
@@ -51,9 +64,8 @@
     <button onclick="closeMedia()">关闭摄像头</button>
     <button onclick="openMedia()">开启摄像头</button>
     <button onclick="takePhoto()">拍照</button><br /><br />
-    <video class="src-video" width="300px" height="300px" autoplay playsinline></video>
-    <canvas id="canvas" width="300px" height="300px"></canvas>
-    <img src="" alt="" class="photo" />
+    <video class="src-video" autoplay playsinline></video>
+    <img style="display: none;" src="" alt="" class="photo" />
   </body>
   <script>
     let srcVideo = document.querySelector("video.src-video");
@@ -93,10 +105,17 @@
 
     // 拍照
     let takePhoto = function () {
-      let canvas = document.querySelector("#canvas");
+      // let canvas = document.querySelector("#canvas");
+      const width = srcVideo.offsetWidth
+      const canvas = document.createElement('canvas')
       //获取 `canvas`元素，根据`srcVideo`中的数据进行图片绘制 `ctx.drawImage()`；
+      canvas.width = width
+      canvas.height = width
       let ctx = canvas.getContext("2d");
-      ctx.drawImage(srcVideo, 0, 0, 300, 300);
+      ctx.drawImage(srcVideo, 0, 0, width, width);
+      srcVideo.style.display = 'none'
+      photo.src = canvas.toDataURL()
+      photo.style.display = 'block'
     };
 
     // 关闭摄像头
