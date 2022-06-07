@@ -40,9 +40,15 @@
         height: 80vh;
         object-fit: cover;
       }
+      .img-box {
+        width: 100vw;
+        height: 60vh;
+      }
       .photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         transform: scaleX(-1);
-        object-fit: scale-down;
       }
       @keyframes dot {
         0% {
@@ -65,12 +71,15 @@
     <button onclick="openMedia()">开启摄像头</button>
     <button onclick="takePhoto()">拍照</button><br /><br />
     <video class="src-video" autoplay playsinline></video>
-    <img style="display: none;" src="" alt="" class="photo" />
+    <div class="img-box" style="display: none;">
+      <img src="" alt="" class="photo" />
+    </div>
   </body>
   <script>
     let srcVideo = document.querySelector("video.src-video");
     let mediaStream;
     let photo = document.querySelector("img.photo");
+    let imgbox = document.querySelector("div.img-box");
     let front = true
     // 开启摄像头
     let openMedia = async function () {
@@ -107,15 +116,16 @@
     let takePhoto = function () {
       // let canvas = document.querySelector("#canvas");
       const width = srcVideo.offsetWidth
+      const height = srcVideo.offsetHeight
       const canvas = document.createElement('canvas')
       //获取 `canvas`元素，根据`srcVideo`中的数据进行图片绘制 `ctx.drawImage()`；
       canvas.width = width
-      canvas.height = width
+      canvas.height = height
       let ctx = canvas.getContext("2d");
-      ctx.drawImage(srcVideo, 0, 0, width, width);
+      ctx.drawImage(srcVideo, 0, 0, width, height);
       srcVideo.style.display = 'none'
       photo.src = canvas.toDataURL()
-      photo.style.display = 'block'
+      imgbox.style.display = 'block'
     };
 
     // 关闭摄像头
