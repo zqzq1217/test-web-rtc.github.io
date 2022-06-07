@@ -115,14 +115,14 @@
     // 拍照
     let takePhoto = function () {
       // let canvas = document.querySelector("#canvas");
-      const width = srcVideo.offsetWidth
-      const height = srcVideo.offsetHeight
+      const width = srcVideo.videoWidth
+      const height = srcVideo.videoHeight
       const canvas = document.createElement('canvas')
       //获取 `canvas`元素，根据`srcVideo`中的数据进行图片绘制 `ctx.drawImage()`；
       canvas.width = width
       canvas.height = height
       let ctx = canvas.getContext("2d");
-      ctx.drawImage(srcVideo, 0, 0, 800, 1000);
+      ctx.drawImage(srcVideo, 0, 0, width, height);
       srcVideo.style.display = 'none'
       photo.src = canvas.toDataURL()
       imgbox.style.display = 'block'
